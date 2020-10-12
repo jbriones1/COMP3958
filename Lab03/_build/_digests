@@ -1,0 +1,5 @@
+"Rule: ocaml: ml -> cmo & cmi (%=BrionesJonAndre_A01170906_Lab03 )": "\026w\159\004\241\023\219\190E\181uA\157\235\201\150"
+"Rule: ocaml: ml & cmi -> cmx & o (%=BrionesJonAndre_A01170906_Lab03 )": "UV\204_W\239\018Cq\\Xl'S\\o"
+"Resource: /home/jondre/Desktop/COMP3958/BrionesJonAndre_A01170906_Lab03.ml": "\020\158'\132\007N\128\168\172\145$\226\196W|\221"
+"Rule: ocaml dependencies ml (%=BrionesJonAndre_A01170906_Lab03 )": "\187\199\236b\024\136\142\031\144\179\127\183\247\174\238<"
+"Rule: ocaml: cmx* & o* -> native (%=BrionesJonAndre_A01170906_Lab03 )": "\187R\202kT\188\020\1976z\027g\248\198\197\174"
