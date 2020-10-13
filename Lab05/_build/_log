@@ -1,8 +1,20 @@
 ### Starting build.
 # Target: blackjack.ml.depends, tags: { package(core), ppx(ppx-jane -as-ppx), bin_annot, debug, extension:ml, file:blackjack.ml, ocaml, ocamldep, quiet, short_paths, thread }
 ocamlfind ocamldep -package core -ppx 'ppx-jane -as-ppx' -modules blackjack.ml > blackjack.ml.depends
-+ ocamlfind ocamldep -package core -ppx 'ppx-jane -as-ppx' -modules blackjack.ml > blackjack.ml.depends
-File "blackjack.ml", line 194, characters 29-29:
-Error: Syntax error
-Command exited with code 2.
-# Compilation unsuccessful.
+# Target: blackjack.cmo, tags: { package(core), ppx(ppx-jane -as-ppx), bin_annot, byte, compile, debug, extension:cmo, extension:ml, file:blackjack.cmo, file:blackjack.ml, implem, ocaml, quiet, short_paths, thread }
+ocamlfind ocamlc -c -w A-4-33-40-41-42-43-34-44 -strict-sequence -g -bin-annot -short-paths -thread -package core -ppx 'ppx-jane -as-ppx' -o blackjack.cmo blackjack.ml
++ ocamlfind ocamlc -c -w A-4-33-40-41-42-43-34-44 -strict-sequence -g -bin-annot -short-paths -thread -package core -ppx 'ppx-jane -as-ppx' -o blackjack.cmo blackjack.ml
+File "blackjack.ml", line 181, characters 6-16:
+181 |   let game_state = first_deal pregame_state "player" in
+            ^^^^^^^^^^
+Warning 26: unused variable game_state.
+# Target: blackjack.cmx, tags: { package(core), ppx(ppx-jane -as-ppx), bin_annot, compile, debug, extension:cmx, extension:ml, file:blackjack.cmx, file:blackjack.ml, implem, native, ocaml, quiet, short_paths, thread }
+ocamlfind ocamlopt -c -w A-4-33-40-41-42-43-34-44 -strict-sequence -g -bin-annot -short-paths -thread -package core -ppx 'ppx-jane -as-ppx' -o blackjack.cmx blackjack.ml
++ ocamlfind ocamlopt -c -w A-4-33-40-41-42-43-34-44 -strict-sequence -g -bin-annot -short-paths -thread -package core -ppx 'ppx-jane -as-ppx' -o blackjack.cmx blackjack.ml
+File "blackjack.ml", line 181, characters 6-16:
+181 |   let game_state = first_deal pregame_state "player" in
+            ^^^^^^^^^^
+Warning 26: unused variable game_state.
+# Target: blackjack.native, tags: { package(core), ppx(ppx-jane -as-ppx), bin_annot, debug, dont_link_with, extension:native, file:blackjack.native, link, native, ocaml, program, quiet, short_paths, thread }
+ocamlfind ocamlopt -linkpkg -g -thread -package core blackjack.cmx -o blackjack.native
+# Compilation successful.

@@ -1,6 +1,8 @@
 open Base
 open Stdio
 
+
+(* UNFINISHED *)
 (*******************************************************************************
  TYPE DECLARATION 
  ******************************************************************************)
@@ -43,6 +45,12 @@ let int_of_rank = function
   | Jack  -> 11
   | Num x -> x
 
+let int_of_round = function
+| Init   -> 0
+| Player -> 1
+| Dealer -> 2
+| End    -> 3
+
 let suit_of (Card(_, s)) = s
 
 (*******************************************************************************
@@ -75,8 +83,22 @@ let compare (Card (r1, s1)) (Card (r2, s2)) =
 
 let read_input () =
   match In_channel.input_line stdin with
-  | None -> 'E'
-  | Some command -> command.[0]
+  | None -> '\x00'
+  | Some command -> 
+    if String.length command < 1
+    then '\t'
+    else command.[0]
+
+let r_compare r1 r2 =
+  let i, j = int_of_round r1, int_of_round r2 in
+  phys_equal i j
+
+let l_length lst =
+  let rec aux lst acc =
+    match lst with
+    | [] -> acc
+    | _::t -> aux t (acc+1)
+  in aux lst 0
 
 (*******************************************************************************
  GAME FUNCTIONS
@@ -91,7 +113,9 @@ let rec hand_sum acc = function
 let rec first_deal state player =
   let card = List.hd_exn state.deck in
   let deck' = List.tl_exn state.deck in
-  if (player = "player" && state.round = Init && state.p_hand = []) then
+  if (String.equal player "player" 
+      && r_compare state.round Init 
+      && l_length state.p_hand = 0) then
   let state' =
     {
       round    = state.round;
@@ -101,8 +125,10 @@ let rec first_deal state player =
       p_points = state.p_points;
       d_points = state.d_points
     } in
+    print_endline @@ (string_of_card card) ^ " dealt to player";
     first_deal state' "player"
-  else if (player = "player" && state.round = Init) then
+  else if (String.equal player "player" 
+          && r_compare state.round Init ) then
   let state' =
     {
       round    = state.round;
@@ -112,8 +138,10 @@ let rec first_deal state player =
       p_points = state.p_points;
       d_points = state.d_points
     } in
+    print_endline @@ (string_of_card card) ^ " dealt to player";
     first_deal state' "dealer"
   else
+  let state' =
     {
       round    = Player;
       p_hand   = state.p_hand;
@@ -121,11 +149,12 @@ let rec first_deal state player =
       deck     = deck';
       p_points = state.p_points;
       d_points = state.d_points
-    }
-  
+    } in
+    print_endline @@ (string_of_card card) ^ " dealt to dealer";
+    state'
 
 (*******************************************************************************
- CARD FUNCTIONS
+ INITIAL
  ******************************************************************************)
 let cards_of_suit s =
   (List.map ~f:(fun x -> Card (Num x, s)) @@ List.range 2 11) @
@@ -135,6 +164,28 @@ let full_deck =
   List.fold_left ~init:[] ~f:(fun acc x -> acc @ cards_of_suit x)
     [Spade;Heart;Diamond;Club]
 
+let pregame_state =
+  {
+    round    = Init;
+    p_hand   = [];
+    d_hand   = [];
+    deck     = (List.permute full_deck);
+    p_points = 0;
+    d_points = 0
+  } 
+
 (*******************************************************************************
  MAIN FUNCTION
  ******************************************************************************)
+let play () =
+  let game_state = first_deal pregame_state "player" in
+  let () = print_endline "H to hit, s to stay" in
+  let rec check_command () =
+    match read_input () with
+    | 'H' | 'h' -> print_endline "Hit"; check_command ()
+    | 'S' | 's' -> print_endline "Stay"; check_command ()
+    | '\x00' -> print_endline "Goodbye"
+    | _ -> print_endline "Invalid input"; check_command ()
+  in check_command ()
+
+let () = play ()
