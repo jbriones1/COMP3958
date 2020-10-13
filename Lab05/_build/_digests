@@ -1,5 +1,5 @@
 "Rule: ocaml: ml & cmi -> cmx & o (%=blackjack )": "\014\187\200\132\011}T%x\142\131Y.\229*\147"
+"Resource: /home/jondre/Desktop/COMP3958/Lab05/blackjack.ml": "f\232\157\147t\186\128\208\250\011t:<\205\231v"
 "Rule: ocaml dependencies ml (%=blackjack )": "\tN\026+\1413\207\237\248\\a\252\012\208\132>"
-"Resource: /home/jondre/Desktop/COMP3958/Lab05/blackjack.ml": "\188-\001<X\246\191\187\031\164\138L\152\222\rD"
 "Rule: ocaml: ml -> cmo & cmi (%=blackjack )": "F\n\159\203_\2515\210\242[\189(\167\025\0297"
 "Rule: ocaml: cmx* & o* -> native (%=blackjack )": "\250\187l-\188\002\127\200\191\244Tj\213\146\187\189"
