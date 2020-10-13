@@ -103,12 +103,15 @@ let l_length lst =
 (*******************************************************************************
  GAME FUNCTIONS
  ******************************************************************************)
-let rec hand_sum acc = function
-  | [] -> acc
-  | (rank, _)::t ->
-    let r = int_of_rank rank in
-    if (r = 11 || r = 12 || r = 13) then hand_sum (10+acc) t
-    else hand_sum (r+acc) t
+let hand_sum (lst: card list) =
+  let rec aux acc (lst: card list) =
+    match lst with
+    | [] -> acc
+    | Card (rank, _)::t ->
+      let r = int_of_rank rank in
+      if (r = 11 || r = 12 || r = 13) then aux (10+acc) t
+      else aux (r+acc) t
+  in aux 0 lst
 
 let rec first_deal state player =
   let card = List.hd_exn state.deck in
@@ -153,6 +156,26 @@ let rec first_deal state player =
     print_endline @@ (string_of_card card) ^ " dealt to dealer";
     state'
 
+let hit state =
+  let card = List.hd_exn state.deck in
+  let deck' = List.tl_exn state.deck in
+  if r_compare state.round Player
+  then let state' = {
+    round    = Player;
+    p_hand   = ;
+    d_hand   = [];
+    deck     = (List.permute full_deck);
+    p_points = state.p_points;
+    d_points = state.d_points+1
+  } 
+
+let rec check_command () =
+  match read_input () with
+  | 'H' | 'h' -> print_endline "Hit"; check_command ()
+  | 'S' | 's' -> print_endline "Stay"; check_command ()
+  | '\x00' -> print_endline "Goodbye"
+  | _ -> print_endline "Invalid input"; check_command ()
+
 (*******************************************************************************
  INITIAL
  ******************************************************************************)
@@ -164,8 +187,7 @@ let full_deck =
   List.fold_left ~init:[] ~f:(fun acc x -> acc @ cards_of_suit x)
     [Spade;Heart;Diamond;Club]
 
-let pregame_state =
-  {
+let pregame_state = {
     round    = Init;
     p_hand   = [];
     d_hand   = [];
@@ -175,17 +197,28 @@ let pregame_state =
   } 
 
 (*******************************************************************************
+ TURNS
+ ******************************************************************************)
+let rec p_turn state =
+  if (hand_sum state.p_hand) > 21
+  then let state' = {
+    round    = End;
+    p_hand   = [];
+    d_hand   = [];
+    deck     = (List.permute full_deck);
+    p_points = state.p_points;
+    d_points = state.d_points+1
+  }
+  else  
+
+
+
+(*******************************************************************************
  MAIN FUNCTION
  ******************************************************************************)
 let play () =
   let game_state = first_deal pregame_state "player" in
   let () = print_endline "H to hit, s to stay" in
-  let rec check_command () =
-    match read_input () with
-    | 'H' | 'h' -> print_endline "Hit"; check_command ()
-    | 'S' | 's' -> print_endline "Stay"; check_command ()
-    | '\x00' -> print_endline "Goodbye"
-    | _ -> print_endline "Invalid input"; check_command ()
-  in check_command ()
+  check_command ()
 
 let () = play ()
