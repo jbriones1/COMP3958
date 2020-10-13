@@ -1,0 +1,8 @@
+### Starting build.
+# Target: blackjack.ml.depends, tags: { package(core), ppx(ppx-jane -as-ppx), bin_annot, debug, extension:ml, file:blackjack.ml, ocaml, ocamldep, quiet, short_paths, thread }
+ocamlfind ocamldep -package core -ppx 'ppx-jane -as-ppx' -modules blackjack.ml > blackjack.ml.depends
++ ocamlfind ocamldep -package core -ppx 'ppx-jane -as-ppx' -modules blackjack.ml > blackjack.ml.depends
+File "blackjack.ml", line 194, characters 29-29:
+Error: Syntax error
+Command exited with code 2.
+# Compilation unsuccessful.

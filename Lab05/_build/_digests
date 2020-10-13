@@ -1,0 +1,5 @@
+"Rule: ocaml: ml & cmi -> cmx & o (%=blackjack )": "\148<\155\217 v%\191p(f\174yN\149X"
+"Rule: ocaml dependencies ml (%=blackjack )": "\178\249J\235\171\174rj\030\000C0\133\192\226\193"
+"Resource: /home/jondre/Desktop/COMP3958/Lab05/blackjack.ml": "(\172edY\213o\029\206\249NU.i\225l"
+"Rule: ocaml: ml -> cmo & cmi (%=blackjack )": "8\219[)T\022\139J6Uk\1516\012\158\177"
+"Rule: ocaml: cmx* & o* -> native (%=blackjack )": "Y\210.\183\225\205\246\211/R\254\237fik\204"

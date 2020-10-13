@@ -1,15 +1,16 @@
 open Base
 open Stdio
 
-type ('a, 'b) bstree = L | N of ('a * 'b) * ('a, 'b) bstree * ('a, 'b) bstree
+type ('k, 'v) bstree = L | N of ('k * 'v) * ('k, 'v) bstree * ('k, 'v) bstree
 
 (* 
  * Max function,.
- * Finds the maximum value in a binary search tree. 
+ * Finds the maximum value in a binary search tree.
+ * Fails with an error if the tree is empty. 
  *
  * bst: binary search tree to search through 
  *)
-let rec max bst =
+let rec max (bst: ('k, 'v) bstree) =
   match bst with
   | L -> failwith "empty tree"
   | N (x, _, L) -> x
@@ -25,7 +26,7 @@ let rec max bst =
  * key: the key the tuple will have
  * value: the value of the tuple 
  *)
-let rec insert bst ~compare ~key ~value =
+let rec insert (bst: ('k, 'v) bstree) ~compare ~(key: 'k) ~(value: 'v) =
   match bst with
   | L -> N ((key, value), L, L)
   | N ((k,v), l, r) when compare key k < 0 -> 
@@ -43,7 +44,7 @@ let rec insert bst ~compare ~key ~value =
  * compare: function to compare keys
  * key: key to find
  *)
-let rec find bst ~compare key =
+let rec find (bst: ('k, 'v) bstree) ~compare (key: 'k) =
   match bst with
   | L -> None
   | N ((k,v), l, _) when compare key k < 0 -> find l compare key   
@@ -63,7 +64,7 @@ let rec find bst ~compare key =
  * compare: function to compare keys
  * key: key to delete
  *)
-let rec delete bst ~compare key =
+let rec delete (bst: ('k, 'v) bstree) ~compare (key: 'k) =
   match bst with
   | L -> L
   | N ((k, v), l, r) when compare key k < 0 -> N ((k,v), delete l compare key, r)
@@ -73,7 +74,7 @@ let rec delete bst ~compare key =
   | N (_, l, L) -> l
   | N (_, l, r) -> 
       let (k1, v1) = max l in
-      N ((k1, v1), delete l compare (k1), r)
+      N ((k1, v1), delete l compare k1, r)
 
 (*
  * Converts a 2-tuple list into a binary search tree
@@ -81,7 +82,7 @@ let rec delete bst ~compare key =
  * lst: list to convert
  * compare: function to compare the keys of the tuple
  *)
-let bstree_of_list lst ~compare =
+let bstree_of_list (lst: ('k *'v) list) ~compare =
   let rec aux lst' acc =
     match lst' with
     | [] -> acc
