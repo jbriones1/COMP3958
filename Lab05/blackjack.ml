@@ -1,4 +1,3 @@
-open Base
 open Stdio
 
 
@@ -19,10 +18,10 @@ type card = Card of rank * suit
 
 type round =
   | Init
-  | New_Round
   | Player
   | Dealer
   | End
+  | Exit
 
 type state = {
   round: round;
@@ -48,10 +47,10 @@ let int_of_rank = function
 
 let int_of_round = function
   | Init      -> 0
-  | New_Round -> 1
-  | Player    -> 2
-  | Dealer    -> 3
-  | End       -> 4
+  | Player    -> 1
+  | Dealer    -> 2
+  | End       -> 3
+  | Exit      -> 4
 
 let suit_of (Card(_, s)) = s
 
@@ -93,14 +92,7 @@ let read_input () =
 
 let r_compare r1 r2 =
   let i, j = int_of_round r1, int_of_round r2 in
-  phys_equal i j
-
-let l_length lst =
-  let rec aux lst acc =
-    match lst with
-    | [] -> acc
-    | _::t -> aux t (acc+1)
-  in aux lst 0
+  Base.phys_equal i j
 
 (*******************************************************************************
  GAME FUNCTIONS
@@ -124,14 +116,14 @@ let check_bust state =
   hand_val > 21
 
 let rec first_deal state player = 
-  let card = List.hd_exn state.deck in
-  let deck' = List.tl_exn state.deck in
+  let card = List.hd state.deck in
+  let deck' = List.tl state.deck in
   if (String.equal player "player" 
       && r_compare state.round Init 
-      && l_length state.p_hand = 0) then (* first card for player *)
+      && List.length state.p_hand = 0) then (* first card for player *)
   let state' =
     {
-      round    = state.round;
+      round    = Init;
       p_hand   = card::state.p_hand;
       d_hand   = state.d_hand;
       deck     = deck';
@@ -144,7 +136,7 @@ let rec first_deal state player =
           && r_compare state.round Init ) then
   let state' =
     {
-      round    = state.round;
+      round    = Init;
       p_hand   = card::state.p_hand;
       d_hand   = state.d_hand;
       deck     = deck';
@@ -193,14 +185,23 @@ let rec hit state =
   print_endline @@ (string_of_card card) ^ " dealt to dealer";
   state'
 
+let rec stay state =
+  {
+    round    = Dealer;
+    p_hand   = state.p_hand;
+    d_hand   = state.d_hand;
+    deck     = state.deck;
+    p_points = state.p_points;
+    d_points = state.d_points
+  }
 
 
-let rec check_command () =
+(* let rec check_command state =
   match read_input () with
   | 'H' | 'h' -> print_endline "Hit"; check_bust state; 
-  | 'S' | 's' -> print_endline "Stay"; check_command ()
+  | 'S' | 's' -> print_endline "Stay"; check_command state
   | '\x00' -> print_endline "Goodbye"
-  | _ -> print_endline "Invalid input"; check_command ()
+  | _ -> print_endline "Invalid input"; check_command () *)
 
 (*******************************************************************************
  INITIAL
@@ -225,20 +226,151 @@ let pregame_state = {
 (*******************************************************************************
  TURNS
  ******************************************************************************)
+let rec player_turn state =
+  if hand_sum state.p_hand > 21
+  then 
+  let state' = 
+  {
+    round    = End;
+    p_hand   = state.p_hand;
+    d_hand   = state.d_hand;
+    deck     = state.deck;
+    p_points = state.p_points;
+    d_points = state.d_points
+  } in
+  print_endline "You busted";
+  state' 
+  else 
+  let command = read_input () in
+  if command = 'H' || command = 'h'
+  then player_turn @@ hit state
+  else if command = 'S' || command = 's'
+  then let state' = state in
+    print_endline "Stay";
+    state'
+  else if command = '\x00' then 
+    {
+      round    = Exit;
+      p_hand   = state.p_hand;
+      d_hand   = state.d_hand;
+      deck     = state.deck;
+      p_points = state.p_points;
+      d_points = state.d_points
+    }
+  else let state' = state in
+    print_endline "Invalid input";
+    player_turn state'
+
+
+let rec dealer_turn state =
+  let deal_state =
+  {
+    round    = Dealer;
+    p_hand   = state.p_hand;
+    d_hand   = state.d_hand;
+    deck     = state.deck;
+    p_points = state.p_points;
+    d_points = state.d_points
+  } in
+  if hand_sum state.d_hand >= 17
+  then 
+  let state' = 
+  {
+    round    = End;
+    p_hand   = deal_state.p_hand;
+    d_hand   = deal_state.d_hand;
+    deck     = deal_state.deck;
+    p_points = deal_state.p_points;
+    d_points = deal_state.d_points
+  } in
+  state' 
+  else if hand_sum state.d_hand >= 17
+  then 
+  let state' = 
+  {
+    round    = End;
+    p_hand   = deal_state.p_hand;
+    d_hand   = deal_state.d_hand;
+    deck     = deal_state.deck;
+    p_points = deal_state.p_points;
+    d_points = deal_state.d_points
+  } in
+  print_endline "Dealer stays";
+  state' 
+  else 
+  dealer_turn @@ hit state
+
+let check_winner state =
+  let state' =
+  {
+    round    = Init;
+    p_hand   = state.p_hand;
+    d_hand   = state.d_hand;
+    deck     = state.deck;
+    p_points = state.p_points;
+    d_points = state.d_points
+  } in
+  if hand_sum state'.p_hand > 21 
+     || (hand_sum state'.d_hand <= 21 
+        && hand_sum state'.d_hand > hand_sum state'.p_hand)then 
+    let state'' = 
+    {
+    round    = state'.round;
+    p_hand   = state'.p_hand;
+    d_hand   = state'.d_hand;
+    deck     = state'.deck;
+    p_points = state'.p_points;
+    d_points = state'.d_points+1
+  } in
+  printf "Dealer wins\nPlayer %d | Dealer %d\n" state''.p_points state''.d_points;
+  state''
+  else if hand_sum state'.d_hand > 21 
+     || (hand_sum state'.p_hand <= 21 
+        && hand_sum state'.d_hand < hand_sum state'.p_hand) then
+    let state'' = 
+      {
+      round    = state'.round;
+      p_hand   = state'.p_hand;
+      d_hand   = state'.d_hand;
+      deck     = state'.deck;
+      p_points = state'.p_points+1;
+      d_points = state'.d_points;
+    } in
+    printf "Player wins\nPlayer %d | Dealer %d\n" state''.p_points state''.d_points;
+    state''
+  else
+    printf "Tie\nPlayer %d | Dealer %d\n" state'.p_points state'.d_points;
+    state'
+
+let print_scores state =
+  printf "Player %d | Dealer %d" state.p_points state.d_points
+
 let rec controller state =
   match state.round with
-  | Init -> 0
-  | New_Round -> 1
-  | Player -> 2
-  | Dealer -> 3
-  | End -> 4
-
+  | Init -> 
+    let state' = first_deal state "player" in
+    controller state'
+  | Player -> 
+    let state' = player_turn state in
+    controller state'
+  | Dealer -> 
+    let state' = dealer_turn state in
+    controller state'
+  | End ->
+    let state' = check_winner state in
+    controller state'
+  | Exit -> print_scores state
 
 (*******************************************************************************
  MAIN FUNCTION
  ******************************************************************************)
 let play () =
-  let game_state = first_deal pregame_state "player" in
-  let () = print_endline "H to hit, s to stay" in
+  print_endline "Welcome to Blackjack. Press 'H' to hit and 'S' to stay\n
+    Quit with end-of-file";
+  let game_state = controller pregame_state in
+  controller game_state;
+  print_endline "Finished Blackjack"
+
+
 
 let () = play ()
