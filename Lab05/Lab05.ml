@@ -26,14 +26,14 @@ let rec max (bst: ('k, 'v) bstree) =
  * key: the key the tuple will have
  * value: the value of the tuple 
  *)
-let rec insert (bst: ('k, 'v) bstree) ~compare ~(key: 'k) ~(value: 'v) =
+let rec insert (bst: ('k, 'v) bstree) ~compare:f (key: 'k) (value: 'v) =
   match bst with
   | L -> N ((key, value), L, L)
-  | N ((k,v), l, r) when compare key k < 0 -> 
-      N ((k,v), insert l compare key value, r)
-  | N ((k,v), l, r) when compare key k > 0 -> 
-      N ((k,v), l, insert r compare key value)
-  | N ((k,v), l, r) -> N ((k, value), l, r)
+  | N ((k,v), l, r) when f key k < 0 -> 
+      N ((k,v), insert l ~compare:f key value, r)
+  | N ((k,v), l, r) when f key k > 0 -> 
+      N ((k,v), l, insert r ~compare:f key value)
+  | N ((k,_), l, r) -> N ((k, value), l, r)
 
 (* 
  * Find function. 
@@ -44,11 +44,11 @@ let rec insert (bst: ('k, 'v) bstree) ~compare ~(key: 'k) ~(value: 'v) =
  * compare: function to compare keys
  * key: key to find
  *)
-let rec find (bst: ('k, 'v) bstree) ~compare (key: 'k) =
+let rec find (bst: ('k, 'v) bstree) ~compare:f key =
   match bst with
   | L -> None
-  | N ((k,v), l, _) when compare key k < 0 -> find l compare key   
-  | N ((k,v), _, r) when compare k key < 0 -> find r compare key
+  | N ((k,_), l, _) when f key k < 0 -> find l ~compare:f key   
+  | N ((k,_), _, r) when f k key < 0 -> find r ~compare:f key
   | N ((_,v), _, _) -> Some v
 
 (*
@@ -64,17 +64,17 @@ let rec find (bst: ('k, 'v) bstree) ~compare (key: 'k) =
  * compare: function to compare keys
  * key: key to delete
  *)
-let rec delete (bst: ('k, 'v) bstree) ~compare (key: 'k) =
+let rec delete (bst: ('k, 'v) bstree) ~compare:f (key: 'k) =
   match bst with
   | L -> L
-  | N ((k, v), l, r) when compare key k < 0 -> N ((k,v), delete l compare key, r)
-  | N ((k, v), l, r) when compare k key < 0 -> N ((k,v), l, delete r compare key)
+  | N ((k, v), l, r) when f key k < 0 -> N ((k,v), delete l ~compare:f key, r)
+  | N ((k, v), l, r) when f k key < 0 -> N ((k,v), l, delete r ~compare:f key)
   | N (_, L, L) -> L 
   | N (_, L, r) -> r
   | N (_, l, L) -> l
   | N (_, l, r) -> 
       let (k1, v1) = max l in
-      N ((k1, v1), delete l compare k1, r)
+      N ((k1, v1), delete l ~compare:f k1, r)
 
 (*
  * Converts a 2-tuple list into a binary search tree
@@ -82,11 +82,11 @@ let rec delete (bst: ('k, 'v) bstree) ~compare (key: 'k) =
  * lst: list to convert
  * compare: function to compare the keys of the tuple
  *)
-let bstree_of_list (lst: ('k *'v) list) ~compare =
+let bstree_of_list (lst: ('k *'v) list) ~compare:f =
   let rec aux lst' acc =
     match lst' with
     | [] -> acc
-    | (k,v)::t -> aux t (insert acc compare k v)
+    | (k,v)::t -> aux t (insert acc ~compare:f k v)
   in aux lst L 
 
 (* Tests *)
@@ -95,24 +95,24 @@ let () = printf "-------------------------------------------------------------\n
 let tuple_list = [(3,"three");(2,"two");(7,"seven");(6,"six");(8,"eight")]
 
 let () = printf "\nConvert list to a binary search tree:\n"
-let bs_tree = bstree_of_list tuple_list Int.compare
+let bs_tree = bstree_of_list tuple_list ~compare:Int.compare
 
 let () = printf "\nInsert (1, \"one\"), returns tree with node 1:\n"
 
-let insert_tree = insert bs_tree Int.compare 1 "one"
+let insert_tree = insert bs_tree ~compare:Int.compare 1 "one"
 
 let () = printf "\nFind key 6, returns \'Some \"six\"\':\n"
 
-let find_6_test= find bs_tree Int.compare 6
+let find_6_test= find bs_tree ~compare:Int.compare 6
 
 let () = printf "\nFind key 9, returns \'None\':\n"
 
-let find_9_test = find bs_tree Int.compare 9
+let find_9_test = find bs_tree ~compare:Int.compare 9
 
 let () = printf "\nDelete key 6, returns tree without node 6:\n"
 
-let delete_6_test = delete bs_tree Int.compare 6
+let delete_6_test = delete bs_tree ~compare:Int.compare 6
 
 let () = printf "\nDelete key 9, returns tree unchanged:\n"
 
-let delete_9_test = delete bs_tree Int.compare 9
+let delete_9_test = delete bs_tree ~compare:Int.compare 9
