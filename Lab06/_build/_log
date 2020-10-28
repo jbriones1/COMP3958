@@ -1,0 +1,10 @@
+### Starting build.
+# Target: kvtree.mli.depends, tags: { package(core), ppx(ppx-jane -as-ppx), bin_annot, debug, extension:mli, file:kvtree.mli, ocaml, ocamldep, quiet, short_paths, thread }
+ocamlfind ocamldep -package core -ppx 'ppx-jane -as-ppx' -modules kvtree.mli > kvtree.mli.depends # cached
+# Target: kvtree.cmi, tags: { package(core), ppx(ppx-jane -as-ppx), bin_annot, byte, compile, debug, extension:mli, file:kvtree.mli, interf, ocaml, quiet, short_paths, thread }
+ocamlfind ocamlc -c -w A-4-33-40-41-42-43-34-44 -strict-sequence -g -bin-annot -short-paths -thread -package core -ppx 'ppx-jane -as-ppx' -o kvtree.cmi kvtree.mli # cached
+# Target: kvtree.ml.depends, tags: { package(core), ppx(ppx-jane -as-ppx), bin_annot, debug, extension:ml, file:kvtree.ml, ocaml, ocamldep, quiet, short_paths, thread }
+ocamlfind ocamldep -package core -ppx 'ppx-jane -as-ppx' -modules kvtree.ml > kvtree.ml.depends # cached
+# Target: kvtree.cmo, tags: { package(core), ppx(ppx-jane -as-ppx), bin_annot, byte, compile, debug, extension:cmo, extension:ml, file:kvtree.cmo, file:kvtree.ml, implem, ocaml, quiet, short_paths, thread }
+ocamlfind ocamlc -c -w A-4-33-40-41-42-43-34-44 -strict-sequence -g -bin-annot -short-paths -thread -package core -ppx 'ppx-jane -as-ppx' -o kvtree.cmo kvtree.ml # cached
+# Compilation successful.
