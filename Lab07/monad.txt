@@ -1,0 +1,25 @@
+We can think of bind as a way of "upgrading" a function
+f : 'a -> 'b option
+which takes a regular value of type 'a to a function
+f' : 'a option -> 'b option
+that takes a value of type 'a option
+
+If we have a function 
+g : 'a -> 'b -> 'c option
+that takes 2 regular values, how can we "upgrade" g to
+g': 'a option -> 'b option -> 'c option
+that takes 2 monadic values?
+
+A function of 2 arguments is just a function that takes the first argument
+& returns a function that takes the second argument.  So we can do something
+like this (where g' is upgrade g):
+let upgrade g x y = 
+  x >>= fun a ->
+  y >>= fun b ->
+  g a b
+
+The above actually compiles once we have defined >>= :
+let (>>=) x f =
+  match x with
+  | None -> None
+  | Some x' -> f x'

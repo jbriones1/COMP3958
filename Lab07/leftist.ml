@@ -29,6 +29,13 @@ let delete_min = function
   | E -> failwith "delete_min: empty tree"
   | T (_, _, l, r) -> merge l r
 
+(* Question 1 
+ *
+ * Returns if the heap is a minimum heap
+ *
+ * input: heap
+ * return: true if the heap is a minimum heap 
+ *)
 let rec is_min_heap = function
   | E -> true
   | T (_, _, E, E) -> true
