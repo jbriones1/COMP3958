@@ -4,10 +4,6 @@ let rank = function
   | E -> 0
   | T (r, _, _, _) -> r
 
-let value = function
-  | E -> 0
-  | T (_, v, _, _) -> v
-
 let empty = E
 
 let rec merge t1 t2 =
@@ -36,14 +32,14 @@ let delete_min = function
 let rec is_min_heap = function
   | E -> true
   | T (_, _, E, E) -> true
-  | T (_, x, l, E) ->
-    if x > value l then false
+  | T (_, x, (T(_, v, _, _) as l), E) ->
+    if x > v then false
     else is_min_heap l
-  | T (_, x, E, r) ->
-    if x > value r then false
+  | T (_, x, E, (T(_, v, _, _) as r)) ->
+    if x > v then false
     else is_min_heap r
-  | T (_, x, l, r) -> 
-    if x > value l || x > value r then false
+  | T (_, x, (T(_, v1, _, _) as l), (T(_, v2, _, _) as r)) -> 
+    if x > v1 || x > v2 then false
     else is_min_heap l && is_min_heap r
     
 let a = T (2, 2, T (2, 6, T (1, 7, E, E), T (1, 8, E, E)), T (1, 3, E, E))
