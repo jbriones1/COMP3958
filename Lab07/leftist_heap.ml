@@ -50,6 +50,8 @@ module Make(Ord: OrderedType) = struct
     | T (_, _, l, r) -> merge l r
 
   (**
+   * Question 2
+   *
    * Sorts a list using the heap, in ascending order.
    * 
    * lst: the list being sorted
