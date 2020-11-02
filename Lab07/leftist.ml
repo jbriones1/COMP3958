@@ -34,7 +34,7 @@ let delete_min = function
  * Returns if the heap is a minimum heap
  *
  * input: heap
- * return: true if the heap is a minimum heap 
+ * return: true if the heap is a minimum heap
  *)
 let rec is_min_heap = function
   | E -> true

@@ -49,6 +49,9 @@ module Make(Ord: OrderedType) = struct
     | E -> failwith "delete_min: empty tree"
     | T (_, _, l, r) -> merge l r
 
+  (**
+   * 
+   *)
   let heap_sort lst =
     let h_list = heap_of_list lst in
       let rec aux lst' heap =

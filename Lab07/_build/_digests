@@ -1,6 +1,0 @@
-"Rule: ocaml: ml & cmi -> cmo (%=leftist_heap )": "\1935\192#Z\007\238\207\246f\015\031Z\023\226\n"
-"Rule: ocaml: mli -> cmi (%=leftist_heap )": "7\231)[\203\026\165\190\162\249\028R\254\030\2352"
-"Rule: ocaml dependencies ml (%=leftist_heap )": "\221\217\028\173\234\192\1998\214M\238[|K\235M"
-"Resource: /home/jondre/Desktop/COMP3958/Lab07/leftist_heap.mli": "\251+\167jW*)\161u\200z\131\159P\136\149"
-"Resource: /home/jondre/Desktop/COMP3958/Lab07/leftist_heap.ml": "\138\1909b\236<\157\135\160\248H\133\246m\127\185"
-"Rule: ocaml dependencies mli (%=leftist_heap )": "\208\140\159?\129N\131\221\166CD[?\179\022-"

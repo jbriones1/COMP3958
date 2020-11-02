@@ -28,6 +28,14 @@ let multiply_to n =
   List.range ~stop:`inclusive 1 n >>= fun y ->
   guarded (x * y = n) @@ return (x, y)
 
+(**
+ * Question 3
+ *
+ * List out pythagorean triplets that equals the input integer, with 
+ * a < b < c, where a, b and c are positive integers.
+ * 
+ * n: an integer the triplets add up to
+ *)
 let pythag_triplets n =
   let open Base in
   let open List_monad in
@@ -36,3 +44,5 @@ let pythag_triplets n =
   List.range ~stop:`inclusive (b+1) n >>= fun c ->
   guarded (a*a + b*b = c*c && a + b + c = n) 
     @@ return (a, b, c)
+
+let question3_test = pythag_triplets 1000

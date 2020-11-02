@@ -1,5 +1,0 @@
-"Rule: ocaml: cmx* & o* -> native (%=Lab04a )": "Y\158y\005\132T\133\168k\246\136[\238\128\216h"
-"Rule: ocaml: ml -> cmo & cmi (%=Lab04a )": "\003w\029\215\006\163\254\154\153\182\ts@\167,v"
-"Resource: /home/jondre/Desktop/COMP3958/Lab04/Lab04a.ml": "\2258\164\250\186\006\229\146\224\223scgL\228\137"
-"Rule: ocaml: ml & cmi -> cmx & o (%=Lab04a )": "H\015\016\016\202\019\186;\189i4\134P\247\195\210"
-"Rule: ocaml dependencies ml (%=Lab04a )": "\005]\139\184]{-9\129\246\135\000\174M\229H"
