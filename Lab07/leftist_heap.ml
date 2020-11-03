@@ -70,3 +70,16 @@ module Make(Ord: OrderedType) = struct
         | T (_, x, _, _) ->  aux (x::lst') (delete_min heap) in
     aux [] h_list
 end
+
+module M = Make(String)
+
+open M
+
+  let print_list l =
+    List.iter (fun x -> Printf.printf "%s " x) l
+
+let lst = ["d";"b";"a";"c"]
+let () = Printf.printf "Sorting: "; print_list lst; Printf.printf "\n"
+let heap_sort_test = heap_sort lst
+let () = print_list heap_sort_test; Printf.printf "\n"
+
