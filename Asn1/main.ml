@@ -70,6 +70,9 @@ end
 
 module FT = Make(Frequency_tree)
 
+let freq_compare (x1, y1) (x2, y2) =
+  Base.Int.compare y1 y2
+
 (* 
  * Uses the fold_left function to count the frequency of unique strings
  *
@@ -80,18 +83,20 @@ module FT = Make(Frequency_tree)
 *)
 let frequencies_fold lst =
   let open Base in
+
   let increment_if_match tup n =
     match tup with
     | (k, v) -> 
       if String.equal k n 
       then [(k, v+1)] 
       else [(n,1);(k,v)] in 
+
   let increment acc n =
     match acc with
     | [] -> (n, 1)::acc
     | h::t -> (increment_if_match h n) @ t; in 
-  List.sort lst ~compare: String.compare 
-  |> List.fold_left ~init:[] ~f:increment |> List.rev 
+
+  List.fold_left ~init:[] ~f:increment lst |> List.sort ~compare: freq_compare
 
 let calc_frequencies str =
 
