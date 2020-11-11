@@ -13,6 +13,7 @@ module type S = sig
   val get_min : t -> elt option
   val delete_min : t -> t
   val heap_sort : elt list -> elt list
+  val to_list : t -> elt list
 end
 
 module Make(Ord: OrderedType): S with type elt := Ord.t

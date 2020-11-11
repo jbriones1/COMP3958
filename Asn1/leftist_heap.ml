@@ -13,6 +13,7 @@ module type S = sig
   val get_min : t -> elt option
   val delete_min : t -> t
   val heap_sort : elt list -> elt list
+  val to_list : t -> elt list
 end
 
 module Make(Ord: OrderedType) = struct
@@ -39,7 +40,7 @@ module Make(Ord: OrderedType) = struct
 
   let heap_of_list l =
     let open Base in
-    List.fold_left ~init:E ~f:(fun t x -> insert t x) l
+    List.fold_left ~init:E ~f:(fun h x -> insert h x) l
 
   let get_min = function
     | E -> None
@@ -61,25 +62,20 @@ module Make(Ord: OrderedType) = struct
    *
    * lst': the sorted list of objects
    * heap: the heap being sorted from
-   *)
+  *)
   let heap_sort lst =
     let h_list = heap_of_list lst in
-      let rec aux lst' heap =
-        match heap with
-        | E -> List.rev lst'
-        | T (_, x, _, _) ->  aux (x::lst') (delete_min heap) in
+    let rec aux lst' heap =
+      match heap with
+      | E -> List.rev lst'
+      | T (_, x, _, _) ->  aux (x::lst') (delete_min heap) in
     aux [] h_list
+
+  let to_list h =
+    let rec aux acc h' =
+      match h' with
+        E -> List.rev acc
+      | T (_, x, _, _) -> aux (x::acc) (delete_min h') in
+    aux [] h
 end
-
-module M = Make(String)
-
-open M
-
-  let print_list l =
-    List.iter (fun x -> Printf.printf "%s " x) l
-
-let lst = ["d";"b";"a";"c"]
-let () = Printf.printf "Sorting: "; print_list lst; Printf.printf "\n"
-let heap_sort_test = heap_sort lst
-let () = print_list heap_sort_test; Printf.printf "\n"
 
