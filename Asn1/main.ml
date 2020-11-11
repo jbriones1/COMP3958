@@ -1,5 +1,4 @@
-open Frequency_tree
-
+include Frequency_tree
 let freq_compare (_, y1) (_, y2) =
   Base.Int.compare y1 y2
 
@@ -40,7 +39,10 @@ let encode_text text codes =
     ~f:(fun acc x ->  acc ^ (List.assoc x codes))
 
 let print_list l =
-  List.iter (fun (x, y) -> Printf.printf "(%s, %d) " x y) l 
+  List.iter (fun (x, y) -> Printf.printf "(%s, %d) " x y) l
+
+let print_list2 l = 
+  List.iter (fun (x, y) -> Printf.printf "(%s, %s) " x y) l
 let text = 
   "A_DEAD_DAD_CEDED_A_BAD_BABE_A_BEADED_ABACA_BED"
 let huffman_codes = 
@@ -49,6 +51,7 @@ let huffman_codes =
 
 (* MAIN FUNCTION *)
 open Printf
+
 let () = printf "%s\n" text
-let b = calc_frequencies text
-let () = print_list b; print_endline ""
+let a = calc_frequencies text
+let () = print_list a; print_endline ""
