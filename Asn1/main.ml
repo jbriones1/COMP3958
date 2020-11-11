@@ -1,4 +1,3 @@
-include Frequency_tree
 let freq_compare (_, y1) (_, y2) =
   Base.Int.compare y1 y2
 
@@ -48,10 +47,12 @@ let text =
 let huffman_codes = 
   [("_","00");("A","10");("B","1111");("C","1110");("D","01");("E","110")]
 
+(* I/O *)
+
 
 (* MAIN FUNCTION *)
-open Printf
-
-let () = printf "%s\n" text
+let () = Printf.printf "%s\n" text
 let a = calc_frequencies text
 let () = print_list a; print_endline ""
+let b = Frequency_tree.huffman_of_list a
+let () = print_list2 b; print_endline ""

@@ -1,10 +1,4 @@
-module type Frequency_tree = sig
-  type t
-  val compare : t -> t -> int
-  val merge : t -> t -> t
-end
-
-module Frequency_tree = struct
+module Frequency_tree_ord = struct
   type t = E | T of (string * int) * t * t
 
   let compare t1 t2 =
@@ -12,19 +6,18 @@ module Frequency_tree = struct
       E, E -> 0
     |  E, (T(_,_,_)) | (T(_,_,_)), E -> 0
     | (T((_, x1), _, _)), (T((_, x2), _, _)) -> Base.Int.compare x1 x2
-
-  let merge t1 t2 =
-    match t1, t2 with
-      E, E -> E
-    | t, E | E, t -> t
-    | (T ((_, v1), _, _) as tl), (T ((_, v2), _, _) as tr) -> 
-      T(("-", v1 + v2), tl, tr)
 end
 
-module H = Leftist_heap.Make(Frequency_tree)
+module H = Leftist_heap.Make(Frequency_tree_ord)
 
-include Frequency_tree
+include Frequency_tree_ord
 
+let merge t1 t2 =
+  match t1, t2 with
+    E, E -> E
+  | t, E | E, t -> t
+  | (T ((_, v1), _, _) as tl), (T ((_, v2), _, _) as tr) -> 
+    T(("-", v1 + v2), tl, tr)
 let empty = E
 
 let nodelist_of_tuplist lst =
