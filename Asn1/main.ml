@@ -1,3 +1,6 @@
+(* 
+ * Compares the frequencies of the frequencies list
+ *)
 let freq_compare (_, y1) (_, y2) =
   Base.Int.compare y1 y2
 
@@ -24,6 +27,9 @@ let frequencies_fold lst =
 
   List.fold_left ~init:[] ~f:increment lst |> List.sort ~compare: freq_compare
 
+(* 
+ * Calculates the frequencies of the characters in the string
+ *)
 let calc_frequencies str =
   (* Break the string into a list of string made of its characters *)
   let str_list = 
@@ -42,17 +48,28 @@ let print_list l =
 
 let print_list2 l = 
   List.iter (fun (x, y) -> Printf.printf "(%s, %s) " x y) l
-let text = 
-  "A_DEAD_DAD_CEDED_A_BAD_BABE_A_BEADED_ABACA_BED"
-let huffman_codes = 
-  [("_","00");("A","10");("B","1111");("C","1110");("D","01");("E","110")]
 
-(* I/O *)
-
-
+let remove_newlines str =
+  let split = String.split_on_char '\n' str in
+  Base.List.fold_left ~init:"" ~f:(^) split
 (* MAIN FUNCTION *)
-let () = Printf.printf "%s\n" text
-let a = calc_frequencies text
-let () = print_list a; print_endline ""
-let b = Frequency_tree.huffman_of_list a
-let () = print_list2 b; print_endline ""
+let main () =
+  let open Stdio in
+
+  let input_text = remove_newlines @@ In_channel.input_all stdin in
+
+  let freq = calc_frequencies input_text in
+
+  let codes = Frequency_tree.huffman_of_list freq in
+
+  let encoded_text = encode_text input_text codes in
+
+  print_string @@ "Input string: " ^ input_text ^ "\nFrequency list: \n";
+  print_list freq; print_endline "\nHuffman codes: ";
+  print_list2 codes; print_endline "";
+  printf "%s (%d)\n" encoded_text (String.length encoded_text)
+
+(* Driver *)
+let () = main ()
+
+

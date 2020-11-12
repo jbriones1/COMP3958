@@ -5,7 +5,10 @@ module Frequency_tree_ord = struct
     match t1, t2 with
       E, E -> 0
     |  E, (T(_,_,_)) | (T(_,_,_)), E -> 0
-    | (T((_, x1), _, _)), (T((_, x2), _, _)) -> Base.Int.compare x1 x2
+    | (T((s1, x1), _, _)), (T((s2, x2), _, _)) -> 
+      let v = Base.Int.compare x1 x2 in
+      if v <> 0 then v
+      else String.compare s2 s1
 end
 
 module H = Leftist_heap.Make(Frequency_tree_ord)
@@ -26,8 +29,8 @@ let nodelist_of_tuplist lst =
 let rec insert t (s, v) =
   match t with
     E -> T ((s, v), E, E)
-  | T ((_, v') as n, l, r) when v < v' -> T (n, insert l (s, v), r)
-  | T ((_, v') as n, l, r) when v >= v' -> T (n, l, insert r (s, v))
+  | T ((_, v') as n, l, r) when v <= v' -> T (n, insert l (s, v), r)
+  | T ((_, v') as n, l, r) when v > v' -> T (n, l, insert r (s, v))
   | _ -> t
 
 
