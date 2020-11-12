@@ -50,19 +50,6 @@ module Make(Ord: OrderedType) = struct
     | E -> failwith "delete_min: empty tree"
     | T (_, _, l, r) -> merge l r
 
-  (**
-   * Question 2
-   *
-   * Sorts a list using the heap, in ascending order.
-   * 
-   * lst: the list being sorted
-   * h_list: min_heap of the list being sorted
-   * 
-   * aux: the recursive function that takes the heap and creates a list from it
-   *
-   * lst': the sorted list of objects
-   * heap: the heap being sorted from
-  *)
   let heap_sort lst =
     let h_list = heap_of_list lst in
     let rec aux lst' heap =
