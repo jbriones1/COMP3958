@@ -1,3 +1,10 @@
+(* 
+ * Jon Andre Briones 
+ * A01170906
+ * Set 3V
+ * Lab 08
+ *)
+
 type color = R | B
 type 'a rbtree = L | N of color * 'a rbtree * 'a * 'a rbtree
 
@@ -32,13 +39,28 @@ let insert t x =
 let rbtree_of_list =
   Base.List.fold_left ~init:L ~f:insert
 
-let rec no_adjacent_reds = function
+(* 
+ * Checks that a red node does not have red children.
+ * 
+ * If a node is red, it checks if its children are red and returns false.
+ * Otherwise, it recursively checks its children.
+ *)
+let rec no_adjacent_reds : 'a rbtree -> bool = function
   | L -> true
-  | N (_, L, _, L) -> true
-  | N (R, N (R, _, _, _), x, _) | N (R, _ , x, N (R, _, _, _)) -> false
+  | N (R, N (R, _, _, _), _, _) | N (R, _ , _, N (R, _, _, _)) -> false
   | N (_, l, _, r) -> no_adjacent_reds l && no_adjacent_reds r
 
-let same_black_count = function
+(* 
+ * Counts the black height of each path and ensures it's equal on all paths.
+ * Returns true if the left and right black-heights are equivalent.
+ *
+ * count_blacks: 
+ * Tail-recursive black node counter
+ * 
+ * acc: the accumulator to track the number of black nodes
+ * tr: the tree to count
+ *)
+let same_black_count : 'a rbtree -> bool = function
   | L -> true
   | N (_, l, _, r) ->
     let rec count_blacks acc tr =
@@ -48,6 +70,34 @@ let same_black_count = function
       | N (B, l, _, r) -> (count_blacks (acc+1) l) + (count_blacks (acc+1) r)
     in (count_blacks 0 l = count_blacks 0 r)
 
+(* 
+ * Prints a red-black tree in ASCII code.
+ * Uses ANSI escape codes to colour red nodes.
+ *
+ * tr: the tree to print
+ * 
+ * aux_print: 
+ * Recursively print the red-black tree
+ *
+ * offset: the amount of spaces to offset different tiers of tree
+ * tr': the tree to print
+ *)
+let rbt_print_ascii tr =
+  let open Printf in
+  match tr with
+  | L -> print_endline "-"
+  | _ -> 
+    let rec aux_print offset tr' =
+      match tr' with
+      | L -> printf ("%s-\n") offset
+      | N (B, l, x, r) -> 
+        printf "%s%d\n" offset x;
+        aux_print (offset ^ "  ") l; aux_print (offset ^ "  ") r
+      | N (R, l, x, r) -> 
+        printf "%s\027[31m%d\027[0m\n" offset x;
+        aux_print (offset ^ "  ") l; aux_print (offset ^ "  ") r
+    in aux_print "" tr
+
 let bbb_tree = N (B, N (B, L, 1, L), 2, N (B, L, 3, L))
 let rbb_tree = N (B, N (R, L, 1, L), 2, N (B, L, 3, L))
 let rrb_tree = N (R, N (R, L, 1, L), 2, N (B, L, 3, L))
@@ -56,6 +106,7 @@ let brr_tree = N (R, N (B, L, 1, L), 2, N (R, L, 3, L))
 let bbr_tree = N (B, N (B, L, 1, L), 2, N (R, L, 3, L))
 let brb_tree = N (R, N (B, L, 1, L), 2, N (B, L, 3, L))
 let rbr_tree = N (B, N (R, L, 1, L), 2, N (R, L, 3, L))
+let print_tree = rbtree_of_list [3;2;7;6;8]
 
 let () = print_endline @@ "\n\nTests are in the form left-root-right" ^
                           "\nTesting no adjacent reds" ^
@@ -83,5 +134,7 @@ let same_black_count_test_bbr = same_black_count bbr_tree
 let same_black_count_test_brb = same_black_count brb_tree 
 let same_black_count_test_rbr = same_black_count rbr_tree 
 
+let () = print_endline @@ "\nTesting tree print with [3;2;7;6;8]" ^
+                          "\n-------------------------------------"
 
-
+let () = rbt_print_ascii print_tree
