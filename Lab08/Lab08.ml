@@ -52,7 +52,9 @@ let rec no_adjacent_reds : 'a rbtree -> bool = function
 
 (* 
  * Counts the black height of each path and ensures it's equal on all paths.
- * Returns true if the left and right black-heights are equivalent.
+ * Returns true if the left and right black-heights are equivalent. Only counts
+ * the nodes on the left child, since we can assume the black height is the same
+ * on the right child.
  *
  * count_blacks: 
  * Tail-recursive black node counter
@@ -60,15 +62,16 @@ let rec no_adjacent_reds : 'a rbtree -> bool = function
  * acc: the accumulator to track the number of black nodes
  * tr: the tree to count
  *)
-let same_black_count : 'a rbtree -> bool = function
+let rec same_black_count : 'a rbtree -> bool = function
   | L -> true
   | N (_, l, _, r) ->
     let rec count_blacks acc tr =
       match tr with
       | L -> acc
-      | N (R, l, _, r) -> (count_blacks acc l) + (count_blacks acc r)
-      | N (B, l, _, r) -> (count_blacks (acc+1) l) + (count_blacks (acc+1) r)
-    in (count_blacks 0 l = count_blacks 0 r)
+      | N (R, l', _, _) -> (count_blacks acc l')
+      | N (B, l', _, _) -> (count_blacks (acc+1) l')
+    in (count_blacks 0 l = count_blacks 0 r) 
+       && same_black_count l && same_black_count r
 
 (* 
  * Prints a red-black tree in ASCII code.
@@ -106,7 +109,11 @@ let brr_tree = N (R, N (B, L, 1, L), 2, N (R, L, 3, L))
 let bbr_tree = N (B, N (B, L, 1, L), 2, N (R, L, 3, L))
 let brb_tree = N (R, N (B, L, 1, L), 2, N (B, L, 3, L))
 let rbr_tree = N (B, N (R, L, 1, L), 2, N (R, L, 3, L))
-let print_tree = rbtree_of_list [3;2;7;6;8]
+let good_tree = rbtree_of_list [3;2;7;6;8]
+let bad_tree = 
+  N (B, N (B, N (B, L, 1, L), 2, N (B, L, 3, L)), 4,
+     N (R, N (R, N (B, L, 5, L), 6, N (B, L, 7, L)), 8,
+        N (B, N (B, L, 9, L), 10, N (R, L, 11, L))))
 
 let () = print_endline @@ "\n\nTests are in the form left-root-right" ^
                           "\nTesting no adjacent reds" ^
@@ -121,7 +128,8 @@ let adj_red_test_brr = no_adjacent_reds brr_tree
 let adj_red_test_bbr = no_adjacent_reds bbr_tree
 let adj_red_test_brb = no_adjacent_reds brb_tree
 let adj_red_test_rbr = no_adjacent_reds rbr_tree
-let adj_red_test_print_tree = no_adjacent_reds print_tree
+let adj_red_test_good_tree = no_adjacent_reds good_tree
+let adj_red_test_bad_tree = no_adjacent_reds bad_tree
 
 let () = print_endline @@ "\nTesting same black count" ^
                           "\n-------------------------------------"
@@ -134,9 +142,11 @@ let same_black_count_test_brr = same_black_count brr_tree
 let same_black_count_test_bbr = same_black_count bbr_tree 
 let same_black_count_test_brb = same_black_count brb_tree 
 let same_black_count_test_rbr = same_black_count rbr_tree 
-let same_black_count_test_print_tree = same_black_count print_tree
+let same_black_count_test_good_tree = same_black_count good_tree
+let same_black_count_test_bad_tree = same_black_count bad_tree
 
-let () = print_endline @@ "\nTesting tree print with [3;2;7;6;8]" ^
+let () = print_endline @@ "\nTesting tree print" ^
                           "\n-------------------------------------"
 
-let () = rbt_print_ascii print_tree
+let () = print_endline "Good tree";rbt_print_ascii good_tree
+let () = print_endline "Bad tree";rbt_print_ascii bad_tree
