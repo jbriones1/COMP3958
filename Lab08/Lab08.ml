@@ -121,6 +121,7 @@ let adj_red_test_brr = no_adjacent_reds brr_tree
 let adj_red_test_bbr = no_adjacent_reds bbr_tree
 let adj_red_test_brb = no_adjacent_reds brb_tree
 let adj_red_test_rbr = no_adjacent_reds rbr_tree
+let adj_red_test_print_tree = no_adjacent_reds print_tree
 
 let () = print_endline @@ "\nTesting same black count" ^
                           "\n-------------------------------------"
@@ -133,6 +134,7 @@ let same_black_count_test_brr = same_black_count brr_tree
 let same_black_count_test_bbr = same_black_count bbr_tree 
 let same_black_count_test_brb = same_black_count brb_tree 
 let same_black_count_test_rbr = same_black_count rbr_tree 
+let same_black_count_test_print_tree = same_black_count print_tree
 
 let () = print_endline @@ "\nTesting tree print with [3;2;7;6;8]" ^
                           "\n-------------------------------------"
