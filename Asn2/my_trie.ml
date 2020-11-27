@@ -23,7 +23,7 @@ let charlist_of_string str =
  * Takes a string and adds it to the list of characters. 
  *)
 let add str tr =
-  let char_list = charlist_of_string str in
+  let char_list = Base.String.to_list str in
   let rec add' ch tr' =
     match ch, tr' with
       [], N (_, m) -> N (true, m)
@@ -32,31 +32,20 @@ let add str tr =
   in add' char_list tr
 
 let find str tr = 
-  let char_list = charlist_of_string str in
+  let char_list = Base.String.to_list str in
   let rec find' ch tr' =
     match ch, tr' with
       [], N (b, _) -> b
-    | h::t, N (b, m) -> 
+    | h::t, N (_, m) -> 
       if M.mem h m then find' t (M.find h m)
       else false
   in find' char_list tr
 
 let count tr =
   let chk_word t = if t then 1 else 0 in
-  let rec count' (N (b, l)) acc =
+  let rec count' (N (_, l)) acc =
     M.fold (fun _ (N (b', _) as tr') acc -> (count' tr' (acc + (chk_word b')))) l acc
   in count' tr 0
-
-let rec traverse (N(e, m)) f =
-  M.iter (fun k (N(e', m')) -> f k e'; traverse (N(e', m')) f) m
-
-let print tr =
-  let open Stdio in
-  traverse tr (
-    fun k e ->
-      if e then printf "%c\n" k
-      else printf "%c" k
-  )
 
 let of_list lst = 
   Base.List.fold_left ~init:empty ~f:(fun acc x -> add x acc) lst
