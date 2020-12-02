@@ -25,8 +25,7 @@ let check_words str dictionary =
 
 (* 
  * Reads the first argument of program initialization and creates a dictionary
- * creates a dictionary (trie) from it. Prints the number of words in the
- * dictionary.
+ * (trie) from it. Prints the number of words in the dictionary.
  * 
  * returns: the dictionary
  *)
