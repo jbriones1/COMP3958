@@ -112,7 +112,7 @@ let get_next_states field (i, j) =
 let draw_path field states =
   let mapij f = List.mapi (fun i -> List.mapi (f i)) in
   List.fold_left (fun acc (i, j) ->
-      mapij (fun i' j' xij -> if i=i' && j=j' && xij=' ' then '*' else xij) acc)
+      mapij (fun i' j' xij -> if i=i' && j=j' && xij=' ' then '.' else xij) acc)
     field states
 
 (** Solve a given maze. *)
@@ -126,30 +126,31 @@ let solve field =
     draw_path field (search problem start)
   | _ -> failwith "Not found goal and/or start"
 
-(** Convert a string into a list of characters. *)
-let explode s =
-  let rec aux i l = if i < 0 then l else aux (i - 1) (s.[i] :: l) in
-  aux (String.length s - 1) []
-
 let () =
-  ["#####     ###########           #       ";
-   "#     ###       # #     ####### # ### # ";
-   "# ### ####  # # # # # # #       # # # # ";
-   "#   #   ### # # # # # # ##### # # # # # ";
-   "### # #S####### # # # #       #     # # ";
-   "    # ###         # # ####### ##### # # ";
-   "  ###   # ######### #   #   #   #   # # ";
-   "    ##### # ##   #  # # # # ### # # # # ";
-   "### #   # #    #    # # # # # # # # # # ";
-   "    # # # # ########### # # # # # ######";
-   " #### #   #    # #   #  # #   # #  #    ";
-   "      # ######   # # #  # # # # #  # ## ";
-   "#######   #    # # #    # # # # #  # #  ";
-   "        # # #  # # # #### ### # #    # #";
-   " ########   # #### # #        #    ###  ";
-   "        #######    ###  ##### # #    ## ";
-   " #####                        # # ## #G "]
-  |> List.map explode
+  (* ["#####     ###########           #       ";
+     "#     ###       # #     ####### # ### # ";
+     "# ### ####  # # # # # # #       # # # # ";
+     "#   #   ### # # # # # # ##### # # # # # ";
+     "### # #S####### # # # #       #     # # ";
+     "    # ###         # # ####### ##### # # ";
+     "  ###   # ######### #   #   #   #   # # ";
+     "    ##### # ##   #  # # # # ### # # # # ";
+     "### #   # #    #    # # # # # # # # # # ";
+     "    # # # # ########### # # # # # ######";
+     " #### #   #    # #   #  # #   # #  #    ";
+     "      # ######   # # #  # # # # #  # ## ";
+     "#######   #    # # #    # # # # #  # #  ";
+     "        # # #  # # # #### ### # #    # #";
+     " ########   # #### # #        #    ###  ";
+     "        #######    ###  ##### # #    ## ";
+     " #####                        # # ## #G "] *)
+  [
+    "###########G######";
+    "          #       ";
+    "          #       ";
+    "S                "
+  ]
+  |> List.map Base.String.to_list
   |> solve
   |> List.map (List.map (String.make 1))
   |> List.map (String.concat "")
